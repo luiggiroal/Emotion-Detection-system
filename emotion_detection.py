@@ -1,4 +1,5 @@
 import requests
+import json
 
 
 def emotion_detector(text_to_analyze):
@@ -16,4 +17,21 @@ def emotion_detector(text_to_analyze):
     headers = {"grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"}
     payload = {"raw_document": {"text": text_to_analyze}}
     response = requests.post(url=url, headers=headers, json=payload, timeout=10)
-    return response.text
+
+    response_dict = json.loads(response.text)
+    emotions = response_dict["emotionPredictions"][0]["emotion"]
+
+    # dominant_score = 0
+    # dominant_emotion = None
+    # for emotion, score in emotions.items():
+    #     if score > dominant_score:
+    #         dominant_score = score
+    #         dominant_emotion = emotion
+
+    # Shorter alternative. Return the emotion with the highest
+    # score.
+    dominant_emotion = max(emotions, key=emotions.get)
+
+    emotions["dominant_emotion"] = dominant_emotion
+
+    return emotions
