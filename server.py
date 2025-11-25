@@ -7,9 +7,9 @@ app = Flask(__name__)
 @app.route("/emotionDetector")
 def sent_detector():
     text_to_analyze = request.args.get("textToAnalyze")
-    if not text_to_analyze:
-        return "No text received! Please enter the text to be analyzed."
     response = emotion_detector(text_to_analyze)
+    if response["dominant_emotion"] is None:
+        return "Invalid text! Please try again!"
 
     last_keys = []
     last_values = []
